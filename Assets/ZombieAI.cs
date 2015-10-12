@@ -2,15 +2,15 @@
 using System.Collections;
 
 public class ZombieAI : MonoBehaviour {
-
-    private int x, y;
-
+    private float x, y;
+    private int life = 100;
 
 
 	// Use this for initialization
 	void Start () {
-	
-	}
+        x = GetComponent<Transform>().position.x;
+        y = GetComponent<Transform>().position.y;
+    }
 	
 	// Update is called once per frame
 	void Update () {
