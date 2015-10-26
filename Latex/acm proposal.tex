@@ -1,0 +1,131 @@
+% v2-acmtog-sample.tex, dated March 7 2012
+% This is a sample file for ACM Transactions on Graphics
+%
+% Compilation using 'acmtog.cls' - version 1.2 (March 2012), Aptara Inc.
+% (c) 2010 Association for Computing Machinery (ACM)
+%
+% Questions/Suggestions/Feedback should be addressed to => "acmtexsupport@aptaracorp.com".
+% Users can also go through the FAQs available on the journal's submission webpage.
+%
+% Steps to compile: latex, bibtex, latex latex
+%
+% For tracking purposes => this is v1.2 - March 2012
+\documentclass{acmtog} % V1.2
+
+%\acmVolume{VV}
+%\acmNumber{N}
+%\acmYear{YYYY}
+%\acmMonth{Month}
+%\acmArticleNum{XXX}
+%\acmdoi{10.1145/XXXXXXX.YYYYYYY}
+
+\acmVolume{}
+\acmNumber{}
+\acmYear{2015}
+\acmMonth{October}
+\acmArticleNum{1}
+\doi{}
+
+%ISSN
+\issn{1234-56789}
+
+% Copyright
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+
+\begin{document}
+
+\markboth{P. Blickling, P. Mascha}{Interactive Multi-Agent Simulation of Epidemics}
+
+\title{Interactive Multi-Agent Simulation of Epidemics} % title
+
+\author{\textbf{\uppercase{Patrick Blickling}} {\upshape and}
+\affil{Augsburg University} 
+\textbf{\uppercase{Philipp Mascha}}
+\affil{Augsburg University}
+}
+
+
+\keywords{Simulation, Disease, Multi-Agent, Learning Classifier System, Emergence}
+
+
+\maketitle
+
+\begin{abstract}
+\textit{
+We propose a real-time, multi-agent simulation displaying the spreading of diseases. The simulation will feature a self-organized, self-learning human population which can be observed both at micro and macro level by the user. 
+}
+
+\textit{
+Different plagues, diseases and viruses can be selected by the user. These epidemics can be further customized by changing attributes like incubation time, aggressiveness or mutability.
+}
+
+\textit{
+The simulation model of the humans will feature dynamic changes in behavior as well as a development of immunity to counter the effects of the epidemic.
+}
+
+\textit{
+While the user can learn about the spreading of different diseases, the simulation will also feature gamification elements: To create a virus that survives as long as possible through creating a stable environment - neither killing the whole population nor letting the humans overcome the disease.
+}
+\end{abstract}
+
+\section{Motivation}
+
+Great epidemics always have and will embody a great threat to humanity. Pandemics like the Black-Death, viruses like HIV and even the Flu have cost many lives in human history or even whipped out whole civilizations.
+
+While epidemics have been part of our environment more or less all the time, we're still not capable to cope with them adequately. Missing education seems to be the main reason why viruses like HIV are still huge problems in a large part of the world and even plagues like the Black-Death are re-conquering their ground - even in advanced cultures like the US \footnote{\url{http://www.cdc.gov/plague/maps/}}.
+
+This is why we propose an interactive simulation to show the spreading of various diseases. We don't try to create a completely accurate simulation, both in modeling the diseases as well as in simulating relevant human interaction (tourism, medical research, health-care systems, education \dots). Our first and foremost goal is the user to grasp the concepts why and how epidemics emerge, as well as how they survive or why they vanish after different amounts of time.
+
+\section{Concept idea}
+
+In our simulation there will be a large amount of agents resembling humans. These humans will interact with each other and with their environment, go to work, visit places, meet up with each other or decide to reproduce.
+
+These agents will move inside an pre-generated environment in which they can interact with each other or their surroundings. Inside this environment there are different places to visit.
+
+We propose a place for work, a home, a shop and meeting places like bars. Each of these places can be occupied by one or more agent and might give different benefits for occupation. For example, going to work yields money, which can be used in the shop to generate happines. Being at work might also have the disadvantage of coming into contact with infected agents. Also, institutions like a hospital are possible.
+
+Their behavior will be controlled by a per agent rule-based classifier system (XCS model). Innovation of rules will be created by in-simulation reproduction, making children of agents inherit a subset of their parents rule set, to which random mutation is applied. Also, humans might inherit or develop immunities against certain features of a disease as well as develop a immune system (preventing, for example, re-infection)
+
+Evaluation of rules will be controlled by two major motivations, pleasure and boredom, as proposed by Douglas Adams in his novel `Mostly Harmless'. While pleasure will be the main drive for agents to interact with their world, boredom prevents them from repeating the same actions over and over again.
+
+To prevent over population, we propose to kill human agents after a set amount of time, as well as reducing the likability of generating new offspring based on total or local population. This approach might be considered over-simplified. In our opinion more complex models wouldn't benefit the simulation well enough to justify the work needed to implement these.
+
+There is also a second agent set: Diseases. Disease agents will have different attributes, like incubation time, long or short term treatability, ways of spreading (air, contact, sexual intercourse) and are attached to a human agent (host). We think of providing a large amount of predefined diseases, as well as the option to alter or create new ones. Diseases themselves, especially viral diseases, have the possibility to alter their parameters over time, represented in a value called mutability.
+
+Various diseases might also have certain effects on their human host, like decreasing pleasure (`feeling sick') or even killing them over time. 
+
+\section{Project requirements}
+
+The project requires a representation of the environment, both at micro as well as on macro level. Therefore, a graphical engine like Unity is needed. There needs to be an AI module attached to each agent, based on an XCS model which can adequately learn behaviors and alter them when needed.
+
+Each agent needs the tools to percept and interact with it's environment freely, collecting feedback of its actions. To achieve this, these actions need to be defined and their results clarified. Of course, there needs to be an environment to interact with, providing places of interaction to the human agents.
+
+There is also a requirement for a different set of agents, representing diseases. These will attach to a human and need the means to spread on certain actions. Each agent will have it's own attributes, defined through an archetype, which must be able to alter themselves on spread.
+
+At last, an user interface (UI) for user interaction is needed, which will be described in the following section.
+
+\section{Concept user-experience}
+
+The user will have two views available - one where he can watch the actions of the humans in a top-down perspective, and one that displays the whole map as heat map showing different parameters like human density, grade of infection or overall pleasure values among the humans. Additional, there will be different graphs displaying realtime change in human behavior, for example a curve showing the number of human interactions between each other over time.
+
+At the start of the simulation, the user will select different traits for his disease or may select from a list of predefined diseases. Each trait will affect the point multiplicator of this disease. The user will get points for each second in which there are still infected humans in the environment (or any humans at all), multiplied by the point multiplicator. The current points will always be displayed on any view.
+
+It is possible to change the disease at any time, affecting the point multiplicator as well. This will affect all disease-agents in the world, but ignoring traits that evolved through mutation. By this means, the user can try out different ways of spreading or regain a stable environment. Also, this will help keeping the user engaged in the simulation as he might be bored by just watching his creation do its work. And, as we stated above, pleasure and boredom seem to be the main drives in human behavior (at least in our model).
+
+\section{Timeline}
+
+We plan to finish the human AI (including interaction and graphical display of the environment) by the start of November.
+
+The system of the disease-agents with traits, means of spreading and effects should be finished in the midst of December.
+
+At last, the user experience will be scheduled to the end of December so the concluding report can be written in the first two weeks of January.
+
+\end{document}

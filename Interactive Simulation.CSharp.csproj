@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.2.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -69,8 +71,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\BaseAI.cs" />
+    <Compile Include="Assets\BaseObject.cs" />
+    <Compile Include="Assets\Behaviour.cs" />
+    <Compile Include="Assets\Food.cs" />
     <Compile Include="Assets\HumanAI.cs" />
+    <Compile Include="Assets\Spawner.cs" />
+    <Compile Include="Assets\Weapon.cs" />
     <Compile Include="Assets\ZombieAI.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Latex\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
