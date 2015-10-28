@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,23 +9,18 @@ namespace AI
 {
     public enum Action
     {
-        Wait, Roam,
-        Attack, Flee,
-        GoToFood, GatherFood, GiveFood, EatFood,
-        GoToWeapon, GatherWeapon, GiveWeapon,
-        GoToHuman, GoToZombie,
+        Wait,
+        GoToHospital, GoShopping,
+        GoToWork, GoHome,
+        GoToBar,
+        InteractWithHuman,
         Breed
     };
 
     public enum State
     {
-        FoodInSight, ZombieInSight,
-        WeaponInSight, HumanInSight,
-        ChildInSight,
-        Hungry, Injured,
-        HasWeapon, HasFood,
-        FertileHumanInSight,   // human is other gender and not pregnant if woman
-        Pregnant, Child
+        IsHappy, IsBored, HasMoney,
+        NearHuman, FeelsSick
     };
 
     // a ruleset as well as attributes which can be evolved through inheritance
@@ -42,14 +38,14 @@ namespace AI
 
         private class Rule : IComparable
         {
-            public UberBool[] RuleState = new UberBool[Enum.GetNames(typeof (Action)).Length];
+            public UberBool[] RuleState;
             public Action RuleAction;
             public float Fitness = 0.5F;
             public float Prediction = 0.5F;
             public float PredError = 0.5F;
-            public UberBool this[State s]
+            public UberBool this[int i]
             {
-                get { return RuleState[(int)s]; }
+                get { return RuleState[i]; }
             }
 
             public static bool operator <(Rule a, Rule b)
@@ -62,8 +58,9 @@ namespace AI
                 return a.Fitness > b.Fitness;
             }
 
-            public Rule(List<Action> possibleActions)
+            public Rule(List<Action> possibleActions, int stateSize)
             {
+                RuleState = new UberBool[stateSize];
                 // random category
                 for (int i = 0; i < RuleState.Count(); ++i)
                 {
@@ -93,15 +90,15 @@ namespace AI
         private List<Rule> LastVoters = new List<Rule>();
         public int NumRules;
 
-        public Behaviour(List<Action> possibleActions, int numRules = 40)
+        public Behaviour(List<Action> possibleActions, int stateSize, int numRules = 40)
         {
             NumRules = numRules;
             for (int i = 0; i < NumRules; ++i){
-                RuleSet.Add(new Rule(possibleActions));
+                RuleSet.Add(new Rule(possibleActions, stateSize));
             }
         }
 
-        public Behaviour (List<Action> possibleActions, Behaviour mother, Behaviour father)
+        public Behaviour (List<Action> possibleActions, Behaviour mother, Behaviour father, int stateSize)
         {
             // learn rule size
             NumRules = (mother.NumRules + father.NumRules) / 2 + (int)(Random.value * 5) - 3;
@@ -109,12 +106,12 @@ namespace AI
                 NumRules = 10;
             RuleSet.AddRange(mother.RuleSet);
             RuleSet.AddRange(father.RuleSet);
-            RuleSet.Add(new Rule(possibleActions)); // Innovation
+            RuleSet.Add(new Rule(possibleActions, stateSize)); // Innovation
             RuleSet.Sort();
             RuleSet.RemoveRange(0, RuleSet.Count - NumRules);
         }
 
-        public Action BestAction(Dictionary<State, bool> state)
+        public Action BestAction(BitArray state)
         {
             List<Rule> fitting = new List<Rule>();
             foreach (Rule r in RuleSet)
@@ -151,11 +148,11 @@ namespace AI
             }
         }
 
-        private bool IsActive(Rule rule, Dictionary<State, bool> state)
+        private bool IsActive(Rule rule, BitArray state)
         {
-            foreach (KeyValuePair<State, bool> entry in state)
+            for(int i=0; i < state.Count; ++i)
             {
-                if (! MatchBool(rule[entry.Key], entry.Value))
+                if (! MatchBool(rule[i], state[i]))
                     return false;
             }
             return true;
