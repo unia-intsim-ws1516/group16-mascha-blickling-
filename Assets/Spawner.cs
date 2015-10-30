@@ -10,7 +10,7 @@ namespace Assets
     class Spawner : MonoBehaviour
     {
         public static int MaxX = 100, MaxY = 100, MaxZ = 0;
-        public static int Humans = 100, Places = 12;
+        public static int Humans = 500, Places = 12;
 
         void Start()
         {

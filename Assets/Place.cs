@@ -9,7 +9,7 @@ namespace Assets
     public class Place : MonoBehaviour
     {
         public Type Category;
-        public static int Ticks = 20;
+        public static int Ticks = 1;
         private HashSet<HumanAI> visitors = new HashSet<HumanAI>();
         private static GUIStyle textStyle = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 10};
 

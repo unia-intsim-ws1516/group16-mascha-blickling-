@@ -71,6 +71,7 @@
     <Compile Include="Assets\Behaviour.cs" />
     <Compile Include="Assets\Factories.cs" />
     <Compile Include="Assets\HumanAI.cs" />
+    <Compile Include="Assets\InfoView.cs" />
     <Compile Include="Assets\Place.cs" />
     <Compile Include="Assets\Spawner.cs" />
   </ItemGroup>

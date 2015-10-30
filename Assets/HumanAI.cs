@@ -13,26 +13,28 @@ namespace Assets
 {
     public class HumanAI : MonoBehaviour
     {
-        public int BehaviourUpdateTime = 20 + Random.Range(0, 8); // updates behaviour every x frames
+        public int BehaviourUpdateTime = 8 + Random.Range(0, 8); // updates behaviour every x frames
+        public int BreedingTime = 200 +  Random.Range(0, 100);
         public Behaviour XCS;
-        public float learnRate = 0.01F, sight = 10.0F;
-        public Action currentAction = Action.Wait;
+        public float learnRate = 0.02F, sight = 10.0F;
+        public Action currentAction = Action.GoHome;
         public int PregnancyTime = 0;
         public int ChildTime = 0;
         public enum Gender { Male, Female };
         public Gender Sex;
         private Place currentLocation = null;
+        private List<Action> lastActions = new Action[] { Action.GoHome, Action.GoHome, Action.GoHome }.ToList();
 
-        private bool isFinished = true;
+
         private int updateCount = 0;
 
-        private const int stateSize = 15;//sizeof(byte)*4;
+        private const int stateSize = 8;//sizeof(byte)*4;
         //5 bit each happiness, boredom, money + current location
 
         private List<Action> possibleActions = new Action[] { Action.GoHome, Action.GoShopping, Action.GoToBar, Action.GoToHospital, Action.GoToWork }.ToList();
 
 
-        private byte _Happiness = 0;
+        private byte _Happiness = (byte)Random.Range(0, 255);
         public byte Happiness {
             get { return _Happiness; }
             set
@@ -46,7 +48,7 @@ namespace Assets
             }   
         }
 
-        private byte _Boredom = 0;
+        private byte _Boredom = (byte)Random.Range(0, 255);
         public byte Boredom
         {
             get { return _Boredom; }
@@ -60,7 +62,7 @@ namespace Assets
             }
         }
 
-        private byte _Money;
+        private byte _Money = (byte)Random.Range(0, 255);
         public byte Money
         {
             get { return _Money; }
@@ -76,7 +78,7 @@ namespace Assets
 
         private const int pregnancyDuration = 30 * 30;
         private const int childhoodDuration = 30 * 60;
-        public float BaseSpeed = 0.3F;
+        public const float BaseSpeed = 0.6F;
 
 
         public bool IsPregnant()
@@ -111,27 +113,29 @@ namespace Assets
 
             if (updateCount <= 0)
             {
+                
                 XCS.UpdateRules(CalcBenefit(), learnRate);
                 currentAction = XCS.BestAction(CalcState());
+                lastActions.Add(currentAction);
+                lastActions.RemoveAt(0);
                 updateCount = BehaviourUpdateTime;
-                isFinished = false;
+                
             }
+            if (Time.frameCount % BreedingTime == 0)
+                TryBreed();
             DoAction(currentAction);
 
         }
 
         private BitArray CalcState()
         {
-            List<bool> result = new List<bool>();
-            Place.Type locType = Place.Type.None;
-            if (currentLocation != null)
-                locType = currentLocation.Category;
-            BitArray ba = new BitArray(11);
-            BitArray b = new BitArray(new byte[] { (byte)((Money / 64) << 6 + (Money / 16) << 2 + (Boredom / 64)) });
-            for (int i = 0; i < 8; ++i)
-                ba[i] = b[i];
+            byte b = 0;
+            for (int i=0; i<3; ++i)
+            {
+                b += (byte)((int)lastActions[i] << (i * 3));
+            }
+            return new BitArray(new byte[] { b });
             //todo: locType
-            return ba;
         }
 
         protected void MoveTowards(GameObject o)
@@ -149,18 +153,26 @@ namespace Assets
         {
             GetComponent<Renderer>().enabled = currentLocation == null;
             gameObject.GetComponent<Renderer>().material.color = 
-                new Color (Happiness * 8, 
-                IsPregnant()? 1.0F: 0.0F,
-                IsChild() ? 1.0F: 0.0F);
-            gameObject.name = IsChild() ? (Sex == Gender.Female ? "Girl" : "Boy")
-                : (Sex == Gender.Female ? "Woman" : "Man");
+                new Color (Happiness / 256F, 
+                Boredom/ 256F,
+                Money/ 256F);
+            
             
         }
 
-        protected float CalcBenefit()
+        public float CalcBenefit()
         {
-            float benefit = Happiness / 64.0F - Boredom / 64.0F + 0.5F;
-            return benefit;
+            //List<float> test = new List<float>();
+            //for (float f = -1.0F; f <= 1.0F; f += 0.2F)
+            //{
+            //    test.Add(Logistic(f));
+            //}
+            return (float)Math.Sqrt(Logistic(Happiness / 256F) * (1F - Logistic(Boredom / 256F)));
+        }
+
+        private float Logistic(float x)
+        {
+            return 1F / (1F + (float)Math.Pow(Math.E, -(x - 0.5) * 12));
         }
 
         protected void DoAction(AI.Action action)
@@ -228,7 +240,7 @@ namespace Assets
                 --updateCount;
         }
 
-        private void TryBreed(HumanAI target)
+        private void TryBreed()
         {
             //if (target.Sex != Sex &&
             //    Vector3.Distance(target.gameObject.transform.position, gameObject.transform.position) <= actionRange &&
@@ -243,7 +255,10 @@ namespace Assets
             //    human.AddComponent<HumanAI>();
             //    human.GetComponent<HumanAI>().BeBorn(this, target);
             //}
-            throw new NotImplementedException();
+            HumanAI partner = Array.Sort(GameObject.FindObjectsOfType<HumanAI>(), delegate(HumanAI a, HumanAI b) { return a.CalcBenefit().CompareTo(b.CalcBenefit()); });
+            GameObject child = HumanFactory.CreateHuman(gameObject.transform.position);
+            child.GetComponent<HumanAI>().BeBorn(this, partner);
+            GameObject.Destroy(gameObject);
         }
 
         void GetPregnant()
@@ -256,9 +271,7 @@ namespace Assets
             //gameObject.transform.position = Vector3.Slerp(father.gameObject.transform.position, 
             //    mother.gameObject.transform.position, 
             //    0.5F);
-            //XCS = new Behaviour(possibleActions, father.XCS, mother.XCS);
-            //ChildTime = childhoodDuration;
-            throw new NotImplementedException();
+            XCS = new Behaviour(possibleActions, father.XCS, mother.XCS, stateSize);
         }
 
     }

@@ -9,7 +9,6 @@ namespace AI
 {
     public enum Action
     {
-        Wait,
         GoToHospital, GoShopping,
         GoToWork, GoHome,
         GoToBar,
@@ -40,8 +39,8 @@ namespace AI
         {
             public UberBool[] RuleState;
             public Action RuleAction;
-            public float Fitness = 0.5F;
-            public float Prediction = 0.5F;
+            public float Fitness = 0F;
+            public float Prediction = Random.value;
             public float PredError = 0.5F;
             public UberBool this[int i]
             {
@@ -89,6 +88,8 @@ namespace AI
         private List<Rule> RuleSet = new List<Rule>();
         private List<Rule> LastVoters = new List<Rule>();
         public int NumRules;
+        private List<float> LastBenefits = new List<float>(new float[] {0.5F, 0.5F, 0.5F});
+        private float[] PaybackDistr = new float[] { 0.25F, 0.5F, 0.25F};
 
         public Behaviour(List<Action> possibleActions, int stateSize, int numRules = 40)
         {
@@ -108,7 +109,7 @@ namespace AI
             RuleSet.AddRange(father.RuleSet);
             RuleSet.Add(new Rule(possibleActions, stateSize)); // Innovation
             RuleSet.Sort();
-            RuleSet.RemoveRange(0, RuleSet.Count - NumRules);
+            RuleSet.RemoveRange(NumRules, RuleSet.Count - NumRules);
         }
 
         public Action BestAction(BitArray state)
@@ -122,15 +123,32 @@ namespace AI
                 }
             }
             if (fitting.Count == 0)
-                return Action.Wait;
-            Action best = fitting.Aggregate((l, r) => l.Prediction > r.Prediction ? l : r).RuleAction;
-            LastVoters = fitting.Where((e)=>e.RuleAction == best).ToList();
+                return Action.GoHome;
+            float randomPred = Random.value * fitting.Sum(rule=> rule.Prediction);
+            Rule best = null;
+            foreach (Rule r in fitting)
+            {
+                best = r;
+                if (randomPred - r.Prediction <= 0)
+                    break;
+            }
+            LastVoters = fitting.Where((e)=>e.RuleAction == best.RuleAction).ToList();
             // return highest answer
-            return best;
+            return best.RuleAction;
         }
 
-        public void UpdateRules(float benefit, float learnRate)
+        public void UpdateRules(float newBenefit, float learnRate)
         {
+            // push new benefit
+            LastBenefits.RemoveAt(0);
+            LastBenefits.Add(newBenefit);
+
+            float benefit = 0;
+            for (int i = 0; i < PaybackDistr.Count(); ++i)
+            {
+                benefit += PaybackDistr[i] * LastBenefits[i];
+            }
+
             // get all who voted
             
             foreach (Rule r in LastVoters)

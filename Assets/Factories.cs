@@ -12,7 +12,7 @@ namespace Assets
     {
         public static GameObject CreateHuman(Vector3 location)
         {
-            GameObject human = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            GameObject human = GameObject.CreatePrimitive(PrimitiveType.Cube);
             human.gameObject.transform.position = location;
             human.gameObject.name = "Human";
             human.AddComponent<HumanAI>();
@@ -54,16 +54,16 @@ namespace Assets
         {
             place.gameObject.name = "Bar";
             place.GetComponent<Place>().MoneyIncrease = -1;
-            place.GetComponent<Place>().BoredomIncrease = -1;
+            place.GetComponent<Place>().BoredomIncrease = -3;
             place.GetComponent<Place>().HappinessIncrease = 1;
         }
 
         private static void CreateHospital(GameObject place)
         {
             place.gameObject.name = "Hospital";
-            place.GetComponent<Place>().MoneyIncrease = -1;
-            place.GetComponent<Place>().BoredomIncrease = 0;
-            place.GetComponent<Place>().HappinessIncrease = -1;
+            place.GetComponent<Place>().MoneyIncrease = 0;
+            place.GetComponent<Place>().BoredomIncrease = 5;
+            place.GetComponent<Place>().HappinessIncrease = -5;
             place.GetComponent<Place>().IsIsolated = true;
             place.GetComponent<Place>().CuresAid = true;
         }
@@ -72,8 +72,8 @@ namespace Assets
         {
             place.gameObject.name = "House";
             place.GetComponent<Place>().MoneyIncrease = 0;
-            place.GetComponent<Place>().BoredomIncrease = -2;
-            place.GetComponent<Place>().HappinessIncrease = 0;
+            place.GetComponent<Place>().BoredomIncrease = -6;
+            place.GetComponent<Place>().HappinessIncrease =8;
             place.GetComponent<Place>().IsIsolated = true;
         }
 
@@ -81,15 +81,15 @@ namespace Assets
         {
             place.gameObject.name = "Office";
             place.GetComponent<Place>().MoneyIncrease = 3;
-            place.GetComponent<Place>().BoredomIncrease = 1;
-            place.GetComponent<Place>().HappinessIncrease = 0;
+            place.GetComponent<Place>().BoredomIncrease = 2;
+            place.GetComponent<Place>().HappinessIncrease = -1;
         }
 
         private static void CreateShop(GameObject place)
         {
             place.gameObject.name = "Mall";
-            place.GetComponent<Place>().MoneyIncrease = -2;
-            place.GetComponent<Place>().BoredomIncrease = 1;
+            place.GetComponent<Place>().MoneyIncrease = -4;
+            place.GetComponent<Place>().BoredomIncrease = -2;
             place.GetComponent<Place>().HappinessIncrease = 2;
             place.GetComponent<Place>().IsIsolated = true;
         }
