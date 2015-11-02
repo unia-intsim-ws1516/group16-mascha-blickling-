@@ -10,7 +10,7 @@ namespace Assets
 {
     class InfoView : MonoBehaviour
     {
-
+        public static bool VirusView = true;
 
         void Update()
         {

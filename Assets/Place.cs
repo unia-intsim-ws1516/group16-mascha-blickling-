@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets
 {
@@ -11,7 +12,7 @@ namespace Assets
         public Type Category;
         public static int Ticks = 1;
         private HashSet<HumanAI> visitors = new HashSet<HumanAI>();
-        private static GUIStyle textStyle = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 10};
+        private static GUIStyle textStyle = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 10 };
 
         public enum Type
         {
@@ -36,10 +37,28 @@ namespace Assets
                         human.Happiness += HappinessIncrease;
                         human.Boredom += BoredomIncrease;
                         human.Money += MoneyIncrease;
+                        if (CuresAid)
+                        {
+                            Disease d = human.GetComponent<Disease>();
+                            if (d != null && Random.value < d.HealChance)
+                                GameObject.Destroy(d);
+                        }
                     }
                     else
                     {
                         human.Boredom += 1;
+                    }
+                }
+                if (!IsIsolated)
+                {
+                    foreach (HumanAI infected in visitors.Where(v => v.GetComponent<Disease>() != null))
+                    {
+                        Disease d = infected.GetComponent<Disease>();
+                        foreach (HumanAI human in visitors)
+                        {
+                            if (human.GetComponent<Disease>() == null && Random.value < d.SpreadChance)
+                                human.gameObject.AddComponent<Disease>();
+                        }
                     }
                 }
             }
@@ -68,5 +87,5 @@ namespace Assets
 
     }
 
-    
+
 }

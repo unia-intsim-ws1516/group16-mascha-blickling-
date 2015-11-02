@@ -29,7 +29,7 @@ namespace Assets
         private const float BaseSpeed = 0.8F;
         private int updateCount = 0;
 
-        private const int stateSize = 4;//sizeof(byte)*4;
+        private const int stateSize = 5;//sizeof(byte)*4;
         //5 bit each happiness, boredom, money + current location
 
         private List<Action> possibleActions = new Action[] { Action.GoHome, Action.GoToHospital, Action.GoToWork, Action.GoShopping, Action.GoToBar }.ToList();
@@ -56,21 +56,21 @@ namespace Assets
         void Update()
         {
             UpdateVisuals();
-
+            if (Money > 255)
+                Money = 255;
+            if (Happiness > 255)
+                Happiness = 255;
+            if (Boredom > 255)
+                Boredom = 255;
+            if (Money < 0)
+                Money = 0;
+            if (Happiness < 0)
+                Happiness = 0;
+            if (Boredom < 0)
+                Boredom = 0;
+            DiseaseResults();
             if (updateCount <= 0)
             {
-                if (Money > 255)
-                    Money = 255;
-                if (Happiness > 255)
-                    Happiness = 255;
-                if (Boredom > 255)
-                    Boredom = 255;
-                if (Money < 0)
-                    Money = 0;
-                if (Happiness < 0)
-                    Happiness = 0;
-                if (Boredom < 0)
-                    Boredom = 0;
                 XCS.UpdateRules(CalcBenefit(), learnRate);
                 currentAction = XCS.BestAction(CalcState());
                 lastActions.Add(currentAction);
@@ -83,7 +83,22 @@ namespace Assets
             ++age;
             DoAction(currentAction);
             if (age > 5000 * CalcFitness())
+            {
+                if (currentLocation != null)
+                    currentLocation.Leave(this);
                 GameObject.Destroy(gameObject);
+            }
+                
+        }
+
+        private void DiseaseResults()
+        {
+            Disease d = gameObject.GetComponent<Disease>();
+            if ( d != null)
+            {
+                Happiness -= d.HappinesDecrease;
+                Boredom += d.BoredomIncrease;
+            }
         }
 
         private BitArray CalcState()
@@ -96,6 +111,7 @@ namespace Assets
             BitArray ba = new BitArray(new byte[] { b });
             ba.Length = stateSize;
             ba[3] = Money > 10;
+            ba[4] = GetComponent<Disease>() != null;
             return ba;
             //todo: locType
         }
@@ -115,13 +131,26 @@ namespace Assets
 
         private void UpdateVisuals()
         {
-            GetComponent<Renderer>().enabled = currentLocation == null && age > ChildTime;
-            gameObject.GetComponent<Renderer>().material.color =
-                new Color(Happiness / 256F,
-                Boredom / 256F,
-                Money / 256F);
+            GetComponent<Renderer>().enabled = 
+                currentLocation == null && age > ChildTime;
+            if (InfoView.VirusView)
+            {
+                gameObject.GetComponent<Renderer>().material.color =
+                    GetComponent<Disease>() == null ? Color.green : Color.red;
+            }
+            else
+            {
+                gameObject.GetComponent<Renderer>().material.color =
+                    new Color(Happiness / 256F,
+                    Boredom / 256F,
+                    Money / 256F);
+            }
+        }
 
-
+        void OnMouseOver()
+        {
+            if (Input.GetMouseButtonDown(0))
+                gameObject.AddComponent<Disease>();
         }
 
         public float CalcBenefit()
