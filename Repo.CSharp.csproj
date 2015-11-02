@@ -101,6 +101,7 @@
     <Content Include="ProjectSettings\ProjectVersion.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\TestScene.unity" />
     <None Include="Latex\acm proposal.pdf" />
     <None Include="Latex\acm proposal.synctex.gz" />
     <None Include="Latex\ACM-Reference-Format-Journals.bst" />

@@ -9,9 +9,9 @@ namespace AI
 {
     public enum Action
     {
-        GoToHospital, GoShopping,
-        GoToWork, GoHome,
-        GoToBar,
+        GoToWork, GoToBar, GoToHospital, GoShopping,
+        GoHome,
+        
         InteractWithHuman,
         Breed
     };
@@ -49,12 +49,12 @@ namespace AI
 
             public static bool operator <(Rule a, Rule b)
             {
-                return a.Fitness < b.Fitness;
+                return a.Prediction < b.Prediction;
             }
 
             public static bool operator >(Rule a, Rule b)
             {
-                return a.Fitness > b.Fitness;
+                return a.Prediction > b.Prediction;
             }
 
             public Rule(List<Action> possibleActions, int stateSize)
@@ -77,19 +77,20 @@ namespace AI
 
             public int CompareTo(object obj)
             {
-                if ((obj as Rule).Fitness > Fitness)
+                if ((obj as Rule).Prediction > Prediction)
                     return 1;
-                if ((obj as Rule).Fitness < Fitness)
+                if ((obj as Rule).Prediction < Prediction)
                     return -1;
                 return 0;
             }
         }
 
         private List<Rule> RuleSet = new List<Rule>();
-        private List<Rule> LastVoters = new List<Rule>();
+        private List<List<Rule>> LastVoters = new List<List<Rule>>();
         public int NumRules;
-        private List<float> LastBenefits = new List<float>(new float[] {0.5F, 0.5F, 0.5F});
-        private float[] PaybackDistr = new float[] { 0.25F, 0.5F, 0.25F};
+        private float[] paybackDistr = new float[] { 0.8F, 0.2F};
+        private int maxDelay = 2;
+        private List<Action> possibleActions;
 
         public Behaviour(List<Action> possibleActions, int stateSize, int numRules = 40)
         {
@@ -97,6 +98,7 @@ namespace AI
             for (int i = 0; i < NumRules; ++i){
                 RuleSet.Add(new Rule(possibleActions, stateSize));
             }
+            this.possibleActions = possibleActions;
         }
 
         public Behaviour (List<Action> possibleActions, Behaviour mother, Behaviour father, int stateSize)
@@ -110,7 +112,26 @@ namespace AI
             RuleSet.Add(new Rule(possibleActions, stateSize)); // Innovation
             RuleSet.Sort();
             RuleSet.RemoveRange(NumRules, RuleSet.Count - NumRules);
+            this.possibleActions = possibleActions;
         }
+
+        private class Counter
+        {
+            private int count = 0;
+            private float value = 0F;
+            public void Add(float val)
+            {
+                ++count;
+                value += val;
+            }
+
+            public float Value()
+            {
+                return value / count;
+            }
+
+        }
+
 
         public Action BestAction(BitArray state)
         {
@@ -122,47 +143,56 @@ namespace AI
                     fitting.Add(r);
                 }
             }
-            if (fitting.Count == 0)
-                return Action.GoHome;
-            float randomPred = Random.value * fitting.Sum(rule=> rule.Prediction);
-            Rule best = null;
+            Dictionary<Action, Counter> pred = new Dictionary<Action, Counter>();
+            foreach (Action a in possibleActions)
+                pred.Add(a, new Counter());
             foreach (Rule r in fitting)
             {
-                best = r;
-                if (randomPred - r.Prediction <= 0)
-                    break;
+                pred[r.RuleAction].Add(r.Prediction);
             }
-            LastVoters = fitting.Where((e)=>e.RuleAction == best.RuleAction).ToList();
+            float randomPred = Random.value * pred.Sum(val=> val.Value.Value());
+            
+            Action best = Action.GoHome;
+            float maxValue = 0F;
+            foreach(KeyValuePair<Action, Counter> k in pred)
+            {
+                if (k.Value.Value() > maxValue)
+                {
+                    maxValue = k.Value.Value();
+                    best = k.Key;
+                }
+                //best = k.Key;
+                //randomPred -= k.Value.Value();
+                //if ( randomPred<= 0)
+                //    break;
+            }
+            LastVoters.Add (fitting.Where((e)=>e.RuleAction == best).ToList());
+            if (LastVoters.Count > maxDelay)
+                LastVoters.RemoveAt(0);
             // return highest answer
-            return best.RuleAction;
+            return best;
         }
 
-        public void UpdateRules(float newBenefit, float learnRate)
+        public void UpdateRules(float benefit, float learnRate)
         {
             // push new benefit
-            LastBenefits.RemoveAt(0);
-            LastBenefits.Add(newBenefit);
-
-            float benefit = 0;
-            for (int i = 0; i < PaybackDistr.Count(); ++i)
-            {
-                benefit += PaybackDistr[i] * LastBenefits[i];
-            }
-
-            // get all who voted
             
-            foreach (Rule r in LastVoters)
+            for (int i = 0; i < LastVoters.Count; ++i)
             {
-                r.PredError += learnRate * (Math.Abs(benefit - r.Prediction) - r.PredError);
-                r.Prediction += learnRate * (benefit - r.Prediction);
-            }
-            // count mean accuracy in voters
-            float relAcc = LastVoters.Sum((rule) => 1.0F / rule.PredError) / LastVoters.Count;
-            
-            // update fitness
-            foreach (Rule r in LastVoters)
-            {
-                r.Fitness += learnRate * (relAcc - r.Fitness);
+
+                foreach (Rule r in LastVoters[i])
+                {
+                    r.PredError += paybackDistr[i] * learnRate * (Math.Abs(benefit - r.Prediction) - r.PredError);
+                    r.Prediction += paybackDistr[i] * learnRate * (benefit - r.Prediction);
+                }
+                // count mean accuracy in voters
+                float relAcc = LastVoters[i].Sum((rule) => 1.0F / rule.PredError) / LastVoters.Count;
+
+                // update fitness
+                foreach (Rule r in LastVoters[i])
+                {
+                    r.Fitness += paybackDistr[i] * learnRate * (relAcc - r.Fitness);
+                }
             }
         }
 

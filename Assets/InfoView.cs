@@ -24,21 +24,25 @@ namespace Assets
             actions[Action.GoToBar] = 0;
             foreach (HumanAI human in GameObject.FindObjectsOfType<HumanAI>())
             {
-                ++count;
-                money += human.Money;
-                happy += human.Happiness;
-                boredom += human.Boredom;
-                benefit += human.CalcBenefit();
-                ++actions[human.currentAction];
+                if (human.age > 200)
+                {
+                    ++count;
+                    money += human.Money;
+                    happy += human.Happiness;
+                    boredom += human.Boredom;
+                    benefit += human.CalcFitness();
+                    ++actions[human.currentAction];
+                }
             }
             GetComponent<Text>().text = string.Format(
-                "Avg. Happy: {0:0.##}\nAvg. Boredom: {1:0.##}\nAvg. Money: {2:0.##}\nAvg. Benefit: {8:0.##}\n" +
+                "Avg. Happy: {0:0.##}\nAvg. Boredom: {1:0.##}\nAvg. Money: {2:0.##}\nAvg. Fitness: {8:0.##}\n" +
                 "At work: {3:0.##}\nAt home: {4:0.##}\nAt shop: {5:0.##}\n" +
-                "At bar: {6:0.##}\nAt hospital: {7:0.##}",
+                "At bar: {6:0.##}\nAt hospital: {7:0.##}\n"+
+                "Total humans: {9}",
                 happy / count / 256F, boredom / count / 256F, money / count / 256F,
                 actions[Action.GoToWork] / count, actions[Action.GoHome] / count, actions[Action.GoShopping] / count,
                 actions[Action.GoToBar] / count, actions[Action.GoToHospital] / count,
-                benefit / count);
+                benefit / count, FindObjectsOfType<HumanAI>().Count());
         }
     }
 }

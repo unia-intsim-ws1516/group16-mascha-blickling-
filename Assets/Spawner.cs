@@ -9,21 +9,29 @@ namespace Assets
 {
     class Spawner : MonoBehaviour
     {
-        public static int MaxX = 100, MaxY = 100, MaxZ = 0;
-        public static int Humans = 500, Places = 12;
+        public static int MaxX = 180, MaxY = 120, MaxZ = 0;
+        public const int villX = 30, villY = 30;
+        public static int Humans = 800, PlacesPerVillage = 3, villages = 7;
 
         void Start()
         {
-            PlaceFactory.CreatePlace(Place.Type.Bar, new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));
-            PlaceFactory.CreatePlace(Place.Type.Home, new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));
-            PlaceFactory.CreatePlace(Place.Type.Shop, new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));
-            PlaceFactory.CreatePlace(Place.Type.Office, new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));
-            PlaceFactory.CreatePlace(Place.Type.Hospital, new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));
-            for (int i = 0; i < Places; ++i)
+            List<Vector3> positions = new List<Vector3>();
+            for (int i = 0; i < villages; ++i)
             {
-                PlaceFactory.CreatePlace((Place.Type)Random.Range(0, 4), new Vector3 (Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));
+                Vector3 villPos = new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ));
+                int max = 120;
+                while (positions.Any(p => Vector3.Distance(villPos, p) < --max))
+                    villPos = new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ));
+                positions.Add(villPos);
+                for (int j = 0; j < PlacesPerVillage; ++j)
+                {
+                    max = 40;
+                    Vector3 pos = new Vector3(villPos.x + Random.Range(0, villX), villPos.y + Random.Range(0, villY), 0);
+                    while (FindObjectsOfType<Place>().Any(p => Vector3.Distance(pos, p.gameObject.transform.position) < --max))
+                        pos = new Vector3(villPos.x + Random.Range(0, villX), villPos.y + Random.Range(0, villY), 0);
+                    PlaceFactory.CreatePlace((Place.Type)((j+i)%5), pos);
+                }
             }
-
             for (int i = 0; i < Humans; ++i)
             {
                 HumanFactory.CreateHuman(new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));

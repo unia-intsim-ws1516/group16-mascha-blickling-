@@ -33,9 +33,13 @@ namespace Assets
                 {
                     if (MoneyIncrease + human.Money >= 0)
                     {
-                        human.Happiness = (byte)(human.Happiness + HappinessIncrease);
-                        human.Boredom = (byte)(human.Boredom + BoredomIncrease);
-                        human.Money = (byte)(human.Money + MoneyIncrease);
+                        human.Happiness += HappinessIncrease;
+                        human.Boredom += BoredomIncrease;
+                        human.Money += MoneyIncrease;
+                    }
+                    else
+                    {
+                        human.Boredom += 1;
                     }
                 }
             }
