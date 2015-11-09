@@ -12,6 +12,25 @@ namespace Assets
     {
         public static bool VirusView = true;
 
+        private Dictionary<Action, float[]> histograms = new Dictionary<Action, float[]>();
+
+        private int bufferSize = 120;
+        private static Action[] actions = new Action[] { Action.GoToWork, Action.GoToHospital, Action.GoToBar, Action.GoShopping, Action.GoHome };
+
+        void Start()
+        {
+            foreach (Action a in actions)
+            {
+                histograms[a] = new float[bufferSize];
+            }
+            
+        }
+
+        private void DrawHistogram(float[] hist, Vector4 position)
+        {
+            
+        }
+
         void Update()
         {
             float money = 0F, boredom = 0F, happy = 0F, benefit = 0F;
@@ -38,11 +57,12 @@ namespace Assets
                 "Avg. Happy: {0:0.##}\nAvg. Boredom: {1:0.##}\nAvg. Money: {2:0.##}\nAvg. Fitness: {8:0.##}\n" +
                 "At work: {3:0.##}\nAt home: {4:0.##}\nAt shop: {5:0.##}\n" +
                 "At bar: {6:0.##}\nAt hospital: {7:0.##}\n"+
-                "Total humans: {9}",
-                happy / count / 256F, boredom / count / 256F, money / count / 256F,
+                "Total humans: {9}\nFPS: {10}",
+                happy / count, boredom / count, money / count,
                 actions[Action.GoToWork] / count, actions[Action.GoHome] / count, actions[Action.GoShopping] / count,
                 actions[Action.GoToBar] / count, actions[Action.GoToHospital] / count,
-                benefit / count, FindObjectsOfType<HumanAI>().Count());
+                benefit / count, FindObjectsOfType<HumanAI>().Count(),
+                1/Time.deltaTime);
         }
     }
 }

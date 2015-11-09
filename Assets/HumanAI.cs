@@ -35,11 +35,11 @@ namespace Assets
         private List<Action> possibleActions = new Action[] { Action.GoHome, Action.GoToHospital, Action.GoToWork, Action.GoShopping, Action.GoToBar }.ToList();
 
 
-        public int Happiness = Random.Range(0, 255);
+        public float Happiness = Random.value;
 
-        public int Boredom = Random.Range(0, 255);
+        public float Boredom = Random.value;
 
-        public int Money = Random.Range(0, 255);
+        public float Money = Random.value;
         private float lastBenefit;
 
 
@@ -47,7 +47,6 @@ namespace Assets
         {
             XCS = new Behaviour(possibleActions, stateSize);
             Sex = Random.value > 0.5 ? Gender.Female : Gender.Male;
-            gameObject.transform.position = new Vector3(Random.value * 100, Random.value * 100, 0);
             gameObject.name = "Human";
             Update();
         }
@@ -56,12 +55,12 @@ namespace Assets
         void Update()
         {
             UpdateVisuals();
-            if (Money > 255)
-                Money = 255;
-            if (Happiness > 255)
-                Happiness = 255;
-            if (Boredom > 255)
-                Boredom = 255;
+            if (Money > 1)
+                Money = 1;
+            if (Happiness > 1)
+                Happiness = 1;
+            if (Boredom > 1)
+                Boredom = 1;
             if (Money < 0)
                 Money = 0;
             if (Happiness < 0)
@@ -94,7 +93,7 @@ namespace Assets
         private void DiseaseResults()
         {
             Disease d = gameObject.GetComponent<Disease>();
-            if ( d != null)
+            if ( d != null && currentLocation != null )
             {
                 Happiness -= d.HappinesDecrease;
                 Boredom += d.BoredomIncrease;
