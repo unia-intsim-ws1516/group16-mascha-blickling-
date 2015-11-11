@@ -19,7 +19,7 @@ namespace Assets
             Hospital, Bar, Home, Office, Shop, None
         }
 
-        public float MoneyIncrease = 0,
+        public int MoneyIncrease = 0,
             HappinessIncrease = 0,
             BoredomIncrease = 0;
 

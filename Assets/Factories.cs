@@ -16,9 +16,6 @@ namespace Assets
             human.gameObject.transform.position = location;
             human.gameObject.name = "Human";
             human.AddComponent<HumanAI>();
-            human.AddComponent<NavMeshAgent>();
-            human.GetComponent<NavMeshAgent>().obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
-            
             return human;
         }
     }
@@ -56,17 +53,17 @@ namespace Assets
         private static void CreateBar(GameObject place)
         {
             place.gameObject.name = "Bar";
-            place.GetComponent<Place>().MoneyIncrease = -0.01F;
+            place.GetComponent<Place>().MoneyIncrease = -1;
             place.GetComponent<Place>().BoredomIncrease = 0;
-            place.GetComponent<Place>().HappinessIncrease = 0.05F;
+            place.GetComponent<Place>().HappinessIncrease = 3;
         }
 
         private static void CreateHospital(GameObject place)
         {
             place.gameObject.name = "Hospital";
-            place.GetComponent<Place>().MoneyIncrease = -0.04F;
-            place.GetComponent<Place>().BoredomIncrease = 0.02F;
-            place.GetComponent<Place>().HappinessIncrease = -0.02F;
+            place.GetComponent<Place>().MoneyIncrease = -8;
+            place.GetComponent<Place>().BoredomIncrease = 2;
+            place.GetComponent<Place>().HappinessIncrease = -2;
             place.GetComponent<Place>().IsIsolated = true;
             place.GetComponent<Place>().CuresAid = true;
         }
@@ -75,25 +72,26 @@ namespace Assets
         {
             place.gameObject.name = "House";
             place.GetComponent<Place>().MoneyIncrease = 0;
-            place.GetComponent<Place>().BoredomIncrease = -0.05F;
-            place.GetComponent<Place>().HappinessIncrease = -0.01F;
+            place.GetComponent<Place>().BoredomIncrease = -5;
+            place.GetComponent<Place>().HappinessIncrease = 0;
             place.GetComponent<Place>().IsIsolated = true;
         }
 
         private static void CreateOffice(GameObject place)
         {
             place.gameObject.name = "Office";
-            place.GetComponent<Place>().MoneyIncrease = 0.05F;
-            place.GetComponent<Place>().BoredomIncrease = 0.01F;
-            place.GetComponent<Place>().HappinessIncrease = -0.01F;
+            place.GetComponent<Place>().MoneyIncrease = 3;
+            place.GetComponent<Place>().BoredomIncrease = 0;
+            place.GetComponent<Place>().HappinessIncrease = -1;
         }
 
         private static void CreateShop(GameObject place)
         {
             place.gameObject.name = "Mall";
-            place.GetComponent<Place>().MoneyIncrease = -0.03F;
-            place.GetComponent<Place>().BoredomIncrease = -0.01F;
-            place.GetComponent<Place>().HappinessIncrease = 0.07F;
+            place.GetComponent<Place>().MoneyIncrease = -3;
+            place.GetComponent<Place>().BoredomIncrease = -1;
+            place.GetComponent<Place>().HappinessIncrease = 2;
+            place.GetComponent<Place>().IsIsolated = true;
         }
     }
 }
