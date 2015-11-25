@@ -66,7 +66,6 @@ namespace Assets
 
         void Start()
         {
-
         }
 
         void OnGUI()

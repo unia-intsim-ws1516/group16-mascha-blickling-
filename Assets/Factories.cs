@@ -24,9 +24,14 @@ namespace Assets
     {
         public static GameObject CreatePlace(Place.Type type, Vector3 location)
         {
-            GameObject place = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            Quaternion startRotation = new Quaternion();
+            startRotation.eulerAngles = new Vector3(90f, 180f, 0);
+
+            GameObject place = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            
             place.gameObject.transform.position = location;
-            place.gameObject.transform.localScale = new Vector3(3, 2, 2);
+            place.gameObject.transform.localScale = new Vector3(1.7f, 2, 1.3f);
+            place.gameObject.transform.rotation = startRotation;
             place.AddComponent<Place>();
             switch (type)
             {
@@ -47,6 +52,8 @@ namespace Assets
                     break;
             }
             place.GetComponent<Place>().Category = type;
+
+            place.GetComponent<Place>().GetComponent<Renderer>().material = (Material) Resources.Load(type.ToString());
             return place;
         }
 
@@ -56,6 +63,7 @@ namespace Assets
             place.GetComponent<Place>().MoneyIncrease = -1;
             place.GetComponent<Place>().BoredomIncrease = 0;
             place.GetComponent<Place>().HappinessIncrease = 3;
+
         }
 
         private static void CreateHospital(GameObject place)
@@ -65,7 +73,8 @@ namespace Assets
             place.GetComponent<Place>().BoredomIncrease = 2;
             place.GetComponent<Place>().HappinessIncrease = -2;
             place.GetComponent<Place>().IsIsolated = true;
-            place.GetComponent<Place>().CuresAid = true;
+            place.GetComponent<Place>().CuresAid = true; 
+
         }
 
         private static void CreateHome(GameObject place)

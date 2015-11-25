@@ -51,17 +51,17 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.Advertisements">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
+    <Reference Include="UnityEngine.Analytics">
+      <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
@@ -74,16 +74,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BaseAI.cs" />
-    <Compile Include="Assets\BaseObject.cs" />
     <Compile Include="Assets\Behaviour.cs" />
+    <Compile Include="Assets\Disease.cs" />
     <Compile Include="Assets\EnvironmentInitializer.cs" />
-    <Compile Include="Assets\Food.cs" />
+    <Compile Include="Assets\Factories.cs" />
     <Compile Include="Assets\HumanAI.cs" />
+    <Compile Include="Assets\InfoView.cs" />
     <Compile Include="Assets\MoveToPoint.cs" />
+    <Compile Include="Assets\Place.cs" />
     <Compile Include="Assets\Spawner.cs" />
-    <Compile Include="Assets\Weapon.cs" />
-    <Compile Include="Assets\ZombieAI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
