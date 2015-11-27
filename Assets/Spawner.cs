@@ -43,5 +43,9 @@ namespace Assets
 
         }
 
+        public void CreatePlaceRandom(int placeType)
+        {
+            PlaceFactory.CreatePlace((Place.Type)(placeType % 5), new Vector3(Random.Range(0, MaxX), Random.Range(0, MaxY), Random.Range(0, MaxZ)));
+        }
     }
 }

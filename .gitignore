@@ -210,3 +210,6 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+*.bin
+Temp/UnityTempFile-cedb64a73c39fc246a02ffae0a626ce1
+*.meta
