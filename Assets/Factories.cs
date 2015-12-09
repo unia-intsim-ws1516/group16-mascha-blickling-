@@ -10,26 +10,26 @@ namespace Assets
 
     public class HumanFactory
     {
-        public static GameObject CreateHuman(Vector3 location)
+        public static GameObject CreateHuman()
         {
             GameObject human = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            human.gameObject.transform.position = location;
             human.gameObject.name = "Human";
             human.AddComponent<HumanAI>();
+            human.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             return human;
         }
     }
 
     public class PlaceFactory
     {
-        public static GameObject CreatePlace(Place.Type type, Vector3 location)
+        public static GameObject CreatePlace(Place.Type type, int x, int y)
         {
             Quaternion startRotation = new Quaternion();
             startRotation.eulerAngles = new Vector3(90f, 180f, 0);
 
             GameObject place = GameObject.CreatePrimitive(PrimitiveType.Plane);
             
-            place.gameObject.transform.position = location;
+            
             place.gameObject.transform.localScale = new Vector3(1.7f, 2, 1.3f);
             place.gameObject.transform.rotation = startRotation;
             place.AddComponent<Place>();
@@ -54,6 +54,8 @@ namespace Assets
             place.GetComponent<Place>().Category = type;
 
             place.GetComponent<Place>().GetComponent<Renderer>().material = (Material) Resources.Load(type.ToString());
+            place.GetComponent<Place>().X = x;
+            place.GetComponent<Place>().Y = y;
             return place;
         }
 
