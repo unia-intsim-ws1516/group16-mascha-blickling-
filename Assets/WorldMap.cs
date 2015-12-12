@@ -26,6 +26,7 @@ namespace Assets
         GameObject[,] visualTiles;
         public string Filename;
         const char Sep = ',';
+        int[] ressources; //needs to be initialized -> level-file
 
         public const int Humans = 50;
 
@@ -224,10 +225,27 @@ namespace Assets
                         case Tile.Street:
                             r.material.color = Color.grey;
                             break;
+                        case Tile.Home:
+                            r.material = (Material)Resources.Load("Home");
+                            break;
+                        case Tile.Hospital:
+                            r.material = (Material)Resources.Load("Hospital");
+                            break;
+                        case Tile.Office:
+                            r.material = (Material)Resources.Load("Office");
+                            break;
+                        case Tile.Bar:
+                            r.material = (Material)Resources.Load("Bar");
+                            break;
+                        case Tile.Mall:
+                            r.material = (Material)Resources.Load("Shop");
+                            break;
+
                     }
                 }
             Controls c = GameObject.FindObjectOfType<Controls>();
             var re = visualTiles[(int)Math.Round(c.Cursor.x), (int)Math.Round(c.Cursor.y)].GetComponent<Renderer>();
+            re.material = (Material)Resources.Load("default");
             re.material.color = Color.white;
         }
 
@@ -269,5 +287,20 @@ namespace Assets
                     }
         }
 
+        public void SetTile(int type)
+        {
+            Controls c = GameObject.FindObjectOfType<Controls>();
+            Tile[] buildableTiles = new Tile[] { Tile.Nothing, Tile.Street, Tile.Blockade, Tile.Checkpoint };
+            int x = (int)Math.Round(c.Cursor.x);
+            int y = (int)Math.Round(c.Cursor.y);
+            
+            if (tiles[x, y] != (Tile)type && buildableTiles.Contains(tiles[x, y]))
+            {
+                //if(ressources[tiles[x][y]] > 0 { ressources--;
+                tiles[x, y] = (Tile)type;
+                UpdatePaths();                
+            }
+        }
     }
+
 }
