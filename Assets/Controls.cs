@@ -13,8 +13,8 @@ namespace Assets
         void Update()
         {
             WorldMap map = GameObject.FindObjectOfType<WorldMap>();
-            Cursor.x += Input.GetAxis("Horizontal") / 8;
-            Cursor.y += Input.GetAxis("Vertical") / 8;
+            Cursor.x -= Input.GetAxis("Horizontal") / 8;
+            Cursor.y -= Input.GetAxis("Vertical") / 8;
             if (Input.GetAxis("Horizontal") == 0)
                 Cursor.x = (float)Math.Round((double)Cursor.x);
             if (Input.GetAxis("Vertical") == 0)
