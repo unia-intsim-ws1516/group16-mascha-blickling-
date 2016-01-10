@@ -218,7 +218,7 @@ namespace Assets
                 {
                     var r = visualTiles[x, y].GetComponent<Renderer>();
                     switch (tiles[x, y])
-                    { 
+                    {
                         case Tile.Nothing:
                             r.material.color = Color.green;
                             break;
@@ -240,7 +240,12 @@ namespace Assets
                         case Tile.Mall:
                             r.material = (Material)Resources.Load("Shop");
                             break;
-
+                        case Tile.Blockade:
+                            r.material = (Material)Resources.Load("Blockade");
+                            break;
+                        case Tile.Checkpoint:
+                            r.material = (Material)Resources.Load("Checkpoint");
+                            break;
                     }
                 }
             Controls c = GameObject.FindObjectOfType<Controls>();

@@ -32,28 +32,6 @@ namespace Assets
             {
                 map.SetTile((int)WorldMap.Tile.Street);
             }
-            if (Input.GetButton("Hospital"))
-            {
-                map.SetTile((int)WorldMap.Tile.Hospital);
-            }
-            if (Input.GetButton("Mall"))
-            {
-                map.SetTile((int)WorldMap.Tile.Mall);
-            }
-            if (Input.GetButton("Bar"))
-            {
-                map.SetTile((int)WorldMap.Tile.Bar);
-            }
-
-            if (Input.GetButton("Office"))
-            {
-                map.SetTile((int)WorldMap.Tile.Office);
-            }
-
-            if (Input.GetButton("Home"))
-            {
-                map.SetTile((int)WorldMap.Tile.Home);
-            }
             if (Input.GetButton("Blockade"))
             {
                 map.SetTile((int)WorldMap.Tile.Blockade);
