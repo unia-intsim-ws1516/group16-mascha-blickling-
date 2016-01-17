@@ -6,12 +6,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using Action = AI.Action;
 
+
 namespace Assets
 {
     class InfoView : MonoBehaviour
     {
         public static bool VirusView = true;
+        public GameObject HealthBar;
 
+        void Start()
+        {
+            if (HealthBar == null)
+            {
+                HealthBar = GameObject.Find("HealthBar");
+            }
+        }
         void Update()
         {
             float money = 0F, boredom = 0F, happy = 0F, benefit = 0F;
@@ -43,6 +52,9 @@ namespace Assets
                 actions[Action.GoToWork] / count, actions[Action.GoHome] / count, actions[Action.GoShopping] / count,
                 actions[Action.GoToBar] / count, actions[Action.GoToHospital] / count,
                 benefit / count, FindObjectsOfType<HumanAI>().Count());
+
+            //HEALTH BAR UPDATE
+            HealthBar.SendMessage("SetNewValue", happy / count / 256f);
         }
     }
 }
