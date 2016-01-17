@@ -48,7 +48,7 @@ namespace Assets
             XCS = new Behaviour(possibleActions, stateSize);
             Sex = Random.value > 0.5 ? Gender.Female : Gender.Male;
             gameObject.name = "Human";
-            gameObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            gameObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
             Update();
         }
 
@@ -128,6 +128,7 @@ namespace Assets
             {
                 WorldMap wm = FindObjectOfType<WorldMap>();
                 Vector2 target = wm.Distance.NextPoint(Position(), p.Position());
+                gameObject.transform.LookAt(new Vector3(target.x,0, target.y));
                 gameObject.transform.localPosition = Vector3.MoveTowards(
                     gameObject.transform.localPosition,
                     new Vector3(target.x, 0, target.y),
@@ -142,7 +143,7 @@ namespace Assets
             if (InfoView.VirusView)
             {
                 gameObject.GetComponent<Renderer>().material.color =
-                    GetComponent<Disease>() == null ? Color.blue : Color.red;
+                    GetComponent<Disease>() == null ? Color.white : Color.green;
             }
             else
             {

@@ -16,6 +16,7 @@ namespace Assets
             human.gameObject.name = "Human";
             human.AddComponent<HumanAI>();
             human.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            human.GetComponent<Renderer>().material = (Material)Resources.Load(((int)UnityEngine.Random.Range(1,7)).ToString());
             return human;
         }
     }

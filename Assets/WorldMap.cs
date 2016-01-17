@@ -182,7 +182,7 @@ namespace Assets
                 for (int x = 0; x < tiles.GetLength(0); ++x)
                 {
                     var go = GameObject.CreatePrimitive(PrimitiveType.Plane);
-                    go.transform.localPosition = new Vector3(x, 0, y);
+                    go.transform.localPosition = new Vector3(x, -0.1f, y);
                     go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
                     go.transform.SetParent(transform);
                     visualTiles[x, y] = go;
