@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
 public class GUIBarScript : MonoBehaviour {
 
 	//Declare variables
@@ -98,7 +99,7 @@ public class GUIBarScript : MonoBehaviour {
 	private void UpdateBar()
 	{
 
-        Position.y = Screen.height - TextSize - 70 * ScaleSize;
+        Position.y = Screen.height - TextSize - 70  * ScaleSize;
 		//update the gradient
 		UpdateGradient ();
 

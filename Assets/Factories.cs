@@ -31,7 +31,7 @@ namespace Assets
             GameObject place = GameObject.CreatePrimitive(PrimitiveType.Plane);
             
             
-            place.gameObject.transform.localScale = new Vector3(1.7f, 2, 1.3f);
+            place.gameObject.transform.localScale = new Vector3(0.1f,0.1f,0.1f);
             place.gameObject.transform.rotation = startRotation;
             place.AddComponent<Place>();
             switch (type)
