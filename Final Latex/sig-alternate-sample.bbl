@@ -1,0 +1,29 @@
+\begin{thebibliography}{FPC11}
+
+\bibitem[Ada93]{adams}
+Douglas Adams.
+\newblock {\em Mostly Harmless}.
+\newblock Pan, 1993.
+
+\bibitem[Fly62]{floyd}
+Robert Flyod.
+\newblock Algorithm 97- shortest path.
+\newblock In {\em Communications of the ACM}, volume~6, June 1962.
+
+\bibitem[FPC11]{biowar}
+Philip~V Fellman, Gregory~S Parnell, and Kathleen~M. Carley.
+\newblock Biowar and bioterrorism risk assessment.
+\newblock {\em Eighth International Conference on Complex Systems, Boston},
+  2011.
+
+\bibitem[Ork06]{states}
+Jeff Orkin.
+\newblock Three states and a plan: The ai of f.e.a.r.
+\newblock {\em Proceedings of the Game Developer's Conference (GDC)}, 2006.
+
+\bibitem[Wil95]{wilson1995classifier}
+Stewart~W Wilson.
+\newblock Classifier fitness based on accuracy.
+\newblock {\em Evolutionary computation}, 3(2):149--175, 1995.
+
+\end{thebibliography}
