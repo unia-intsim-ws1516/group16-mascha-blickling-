@@ -43,7 +43,10 @@ namespace Assets
                         {
                             Disease d = human.GetComponent<Disease>();
                             if (d != null && Random.value < d.HealChance)
+                            {
                                 GameObject.Destroy(d);
+
+                            }
                         }
                     }
                     else

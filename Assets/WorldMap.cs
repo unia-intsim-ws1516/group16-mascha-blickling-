@@ -26,12 +26,12 @@ namespace Assets
         GameObject[,] visualTiles;
         public string Filename;
         const char Sep = ',';
-        int[] ressources; //needs to be initialized -> level-file
-
-        public const int Humans = 50;
+        
+        public const int Humans = 100;
 
         public Vector2 Dimensions;
         public PathMap Distance;
+        public PathMap InfectedDistance;
 
         public class PathMap
         {
@@ -48,6 +48,11 @@ namespace Assets
                 ShortestPath = new int[dimX * dimY, dimX * dimY];
             }
             
+            public float CalcDistance (Vector2 src, Vector2 target)
+            {
+                return Distance[VecToInt(src), VecToInt(target)];
+            }
+
             int VecToInt(Vector2 v)
             {
                 if (v.x < 0)
@@ -99,6 +104,7 @@ namespace Assets
             }
         }
 
+        private bool Spawned = false;
 
         public Tile this[int x, int y]{
             set
@@ -115,14 +121,23 @@ namespace Assets
 
         protected void Start()
         {
+            
+        }
+
+        public void SpawnLevel(string filename)
+        {
+            Filename = filename;
             Load();
             Dimensions = new Vector2(tiles.GetLength(0), tiles.GetLength(1));
             Distance = new PathMap(tiles.GetLength(0), tiles.GetLength(1));
+            InfectedDistance = new PathMap(tiles.GetLength(0), tiles.GetLength(1));
             CreatePlanes();
             CreatePlaces();
             UpdateVisual();
-            UpdatePaths();
+            UpdatePaths(Distance);
+            UpdatePaths(InfectedDistance, true);
             SpawnHumans();
+            Spawned = true;
         }
 
         private void SpawnHumans()
@@ -207,7 +222,8 @@ namespace Assets
 
         void Update()
         {
-            UpdateVisual();
+            if (Spawned)
+                UpdateVisual();
             
         }
 
@@ -254,9 +270,9 @@ namespace Assets
             re.material.color = Color.white;
         }
 
-        private void UpdatePaths()
+        private void UpdatePaths(PathMap distanceMap, bool infected = false)
         {
-            Distance.Init();
+            distanceMap.Init();
             for (int y = 0; y < tiles.GetLength(1); ++y)
                 for (int x = 0; x < tiles.GetLength(0); ++x)
                 {
@@ -264,30 +280,38 @@ namespace Assets
                     switch (tiles[x, y])
                     {
                         case Tile.Street:
+                            distanceMap[pos, new Vector2(pos.x + 1, pos.y)] = 1.0f;
+                            distanceMap[pos, new Vector2(pos.x, pos.y - 1)] = 1.0f;
+                            distanceMap[pos, new Vector2(pos.x - 1, pos.y)] = 1.0f;
+                            distanceMap[pos, new Vector2(pos.x, pos.y + 1)] = 1.0f;
+                            break;
                         case Tile.Checkpoint:
-                            Distance[pos, new Vector2(pos.x + 1, pos.y)] = 1.0f;
-                            Distance[pos, new Vector2(pos.x, pos.y - 1)] = 1.0f;
-                            Distance[pos, new Vector2(pos.x - 1, pos.y)] = 1.0f;
-                            Distance[pos, new Vector2(pos.x, pos.y + 1)] = 1.0f;
+                            if (!infected)
+                            {
+                                distanceMap[pos, new Vector2(pos.x + 1, pos.y)] = 1.0f;
+                                distanceMap[pos, new Vector2(pos.x, pos.y - 1)] = 1.0f;
+                                distanceMap[pos, new Vector2(pos.x - 1, pos.y)] = 1.0f;
+                                distanceMap[pos, new Vector2(pos.x, pos.y + 1)] = 1.0f;
+                            }
                             break;
                         case Tile.Hospital:
                         case Tile.Home:
                         case Tile.Office:
                         case Tile.Bar:
                         case Tile.Mall:
-                            Distance[pos, new Vector2(pos.x, pos.y + 1)] = 1.0f;
+                            distanceMap[pos, new Vector2(pos.x, pos.y + 1)] = 1.0f;
                             break;   
                     }                  
                 }
-            // Dijkstra
-            for (int k = 0; k < Distance.DimX * Distance.DimY; ++k)
-                for (int i = 0; i < Distance.DimX * Distance.DimY; ++ i)
-                    for (int j = 0; j < Distance.DimX * Distance.DimY; ++j)
+            // Floyd
+            for (int k = 0; k < distanceMap.DimX * distanceMap.DimY; ++k)
+                for (int i = 0; i < distanceMap.DimX * distanceMap.DimY; ++ i)
+                    for (int j = 0; j < distanceMap.DimX * distanceMap.DimY; ++j)
                     {
-                        if (Distance.Distance[i, k] + Distance.Distance[k, j] < Distance.Distance[i, j])
+                        if (distanceMap.Distance[i, k] + distanceMap.Distance[k, j] < distanceMap.Distance[i, j])
                         {
-                            Distance.Distance[i, j] = Distance.Distance[i, k] + Distance.Distance[k, j];
-                            Distance.ShortestPath[i, j] = Distance.ShortestPath[i, k];
+                            distanceMap.Distance[i, j] = distanceMap.Distance[i, k] + distanceMap.Distance[k, j];
+                            distanceMap.ShortestPath[i, j] = distanceMap.ShortestPath[i, k];
                         }
                     }
         }
@@ -303,7 +327,8 @@ namespace Assets
             {
                 //if(ressources[tiles[x][y]] > 0 { ressources--;
                 tiles[x, y] = (Tile)type;
-                UpdatePaths();                
+                UpdatePaths(Distance);
+                UpdatePaths(InfectedDistance, true);              
             }
         }
     }

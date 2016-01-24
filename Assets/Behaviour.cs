@@ -156,15 +156,15 @@ namespace AI
             float maxValue = 0F;
             foreach(KeyValuePair<Action, Counter> k in pred)
             {
-                if (k.Value.Value() > maxValue)
-                {
-                    maxValue = k.Value.Value();
-                    best = k.Key;
-                }
-                //best = k.Key;
-                //randomPred -= k.Value.Value();
-                //if ( randomPred<= 0)
-                //    break;
+                //if (k.Value.Value() > maxValue)
+                //{
+                //    maxValue = k.Value.Value();
+                //    best = k.Key;
+                //}
+                best = k.Key;
+                randomPred -= k.Value.Value();
+                if (randomPred <= 0)
+                    break;
             }
             LastVoters.Add (fitting.Where((e)=>e.RuleAction == best).ToList());
             if (LastVoters.Count > maxDelay)

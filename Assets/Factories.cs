@@ -72,7 +72,7 @@ namespace Assets
         private static void CreateHospital(GameObject place)
         {
             place.gameObject.name = "Hospital";
-            place.GetComponent<Place>().MoneyIncrease = -8;
+            place.GetComponent<Place>().MoneyIncrease = -3;
             place.GetComponent<Place>().BoredomIncrease = 2;
             place.GetComponent<Place>().HappinessIncrease = -2;
             place.GetComponent<Place>().IsIsolated = true;
@@ -103,7 +103,6 @@ namespace Assets
             place.GetComponent<Place>().MoneyIncrease = -3;
             place.GetComponent<Place>().BoredomIncrease = -1;
             place.GetComponent<Place>().HappinessIncrease = 2;
-            place.GetComponent<Place>().IsIsolated = true;
         }
     }
 }

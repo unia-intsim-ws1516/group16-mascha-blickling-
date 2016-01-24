@@ -15,7 +15,7 @@ namespace Assets
     {
         private const int maxHumans = 60;
 
-        public int BehaviourUpdateTime = 8 + Random.Range(0, 8); // updates behaviour every x frames
+        public int BehaviourUpdateTime = 30 + Random.Range(0, 8); // updates behaviour every x frames
         public int BreedingTime = ChildTime + Random.Range(0, 50);
         public Behaviour XCS;
         public float learnRate = 0.08F;
@@ -26,7 +26,7 @@ namespace Assets
         public Gender Sex;
         private Place currentLocation = null;
         private List<Action> lastActions = new Action[] { Action.GoHome, Action.GoHome, Action.GoHome }.ToList();
-        private const float BaseSpeed = 0.1F;
+        private const float BaseSpeed = 0.02F;
         private int updateCount = 0;
 
         private const int stateSize = 5;//sizeof(byte)*4;
@@ -78,17 +78,24 @@ namespace Assets
                 updateCount = BehaviourUpdateTime;
 
             }
-            if (Time.frameCount % BreedingTime == 0 && Random.value > FindObjectsOfType<HumanAI>().Count() / (float)maxHumans)
-                TryBreed();
-            ++age;
+            //if (Time.frameCount % BreedingTime == 0 && Random.value > FindObjectsOfType<HumanAI>().Count() / (float)maxHumans)
+            //    TryBreed();
+            //++age;
             DoAction(currentAction);
-            if (age > 50000 * CalcFitness())
-            {
-                if (currentLocation != null)
-                    currentLocation.Leave(this);
-                GameObject.Destroy(gameObject);
-            }
+            //if (age > 50000 * CalcFitness())
+            //{
+            //    if (currentLocation != null)
+            //        currentLocation.Leave(this);
+            //    GameObject.Destroy(gameObject);
+            //}
                 
+        }
+
+        public void Die()
+        {
+            if (currentLocation != null)
+               currentLocation.Leave(this);
+            GameObject.Destroy(gameObject);
         }
 
         private void DiseaseResults()
@@ -126,13 +133,22 @@ namespace Assets
         {
             if (p != null)
             {
-                WorldMap wm = FindObjectOfType<WorldMap>();
-                Vector2 target = wm.Distance.NextPoint(Position(), p.Position());
-                gameObject.transform.LookAt(new Vector3(target.x,0, target.y));
-                gameObject.transform.localPosition = Vector3.MoveTowards(
-                    gameObject.transform.localPosition,
-                    new Vector3(target.x, 0, target.y),
-                    BaseSpeed);
+                WorldMap.PathMap pm;
+                if (IsInfected())
+                    pm = FindObjectOfType<WorldMap>().InfectedDistance;
+                else
+                    pm = FindObjectOfType<WorldMap>().Distance;
+                Vector2 target = pm.NextPoint(Position(), p.Position());
+                if (pm.CalcDistance(Position(), target) < 10000)
+                {
+                    gameObject.transform.LookAt(new Vector3(target.x, 0, target.y));
+                    gameObject.transform.localPosition = Vector3.MoveTowards(
+                        gameObject.transform.localPosition,
+                        new Vector3(target.x, 0, target.y),
+                        BaseSpeed);
+                }
+                else
+                    Happiness--;
             }
         }
 
@@ -237,10 +253,17 @@ namespace Assets
                 else
                 {
                     MoveTowards(destination);
+                    //Boredom++;
+                    //Happiness--;
                 }
             }
             else
                 --updateCount;
+        }
+
+        public bool IsInfected()
+        {
+            return GetComponent<Disease>() != null;
         }
 
         private void TryBreed()
