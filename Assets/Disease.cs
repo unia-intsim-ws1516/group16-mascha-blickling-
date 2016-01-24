@@ -8,7 +8,7 @@ namespace Assets
         public float HealChance = 0.2F;
         public int HappinesDecrease = 1;
 
-        public int BoredomIncrease = 1;
+        public int BoredomIncrease = 0;
 
         void Start()
         {

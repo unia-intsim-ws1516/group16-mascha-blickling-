@@ -13,12 +13,12 @@ namespace Assets
 {
     public class HumanAI : MonoBehaviour
     {
-        private const int maxHumans = 500;
+        private const int maxHumans = 60;
 
         public int BehaviourUpdateTime = 8 + Random.Range(0, 8); // updates behaviour every x frames
         public int BreedingTime = ChildTime + Random.Range(0, 50);
         public Behaviour XCS;
-        public float learnRate = 0.08F, sight = 10.0F;
+        public float learnRate = 0.08F;
         public Action currentAction = Action.GoHome;
         public const int ChildTime = 50;
         public int age = 0;
@@ -26,7 +26,7 @@ namespace Assets
         public Gender Sex;
         private Place currentLocation = null;
         private List<Action> lastActions = new Action[] { Action.GoHome, Action.GoHome, Action.GoHome }.ToList();
-        private const float BaseSpeed = 0.8F;
+        private const float BaseSpeed = 0.1F;
         private int updateCount = 0;
 
         private const int stateSize = 5;//sizeof(byte)*4;
@@ -47,8 +47,8 @@ namespace Assets
         {
             XCS = new Behaviour(possibleActions, stateSize);
             Sex = Random.value > 0.5 ? Gender.Female : Gender.Male;
-            gameObject.transform.position = new Vector3(Random.value * 100, Random.value * 100, 0);
             gameObject.name = "Human";
+            gameObject.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
             Update();
         }
 
@@ -82,7 +82,7 @@ namespace Assets
                 TryBreed();
             ++age;
             DoAction(currentAction);
-            if (age > 5000 * CalcFitness())
+            if (age > 50000 * CalcFitness())
             {
                 if (currentLocation != null)
                     currentLocation.Leave(this);
@@ -116,27 +116,34 @@ namespace Assets
             //todo: locType
         }
 
-        protected void MoveTowards(GameObject o)
+        public Vector2 Position()
         {
-            if (o != null)
+            return new Vector2(transform.localPosition.x, transform.localPosition.z);
+        }
+
+        // TODO: Unreachable places
+        protected void MoveTowards(Place p)
+        {
+            if (p != null)
             {
-                gameObject.transform.position = Vector3.MoveTowards(
-                    gameObject.transform.position,
-                    o.gameObject.transform.position,
+                WorldMap wm = FindObjectOfType<WorldMap>();
+                Vector2 target = wm.Distance.NextPoint(Position(), p.Position());
+                gameObject.transform.LookAt(new Vector3(target.x,0, target.y));
+                gameObject.transform.localPosition = Vector3.MoveTowards(
+                    gameObject.transform.localPosition,
+                    new Vector3(target.x, 0, target.y),
                     BaseSpeed);
-                if  (Time.frameCount % 10 == 0)
-                    Boredom++;
             }
         }
 
         private void UpdateVisuals()
         {
             GetComponent<Renderer>().enabled = 
-                currentLocation == null && age > ChildTime;
+                currentLocation == null;
             if (InfoView.VirusView)
             {
                 gameObject.GetComponent<Renderer>().material.color =
-                    GetComponent<Disease>() == null ? Color.green : Color.red;
+                    GetComponent<Disease>() == null ? Color.white : Color.green;
             }
             else
             {
@@ -222,14 +229,14 @@ namespace Assets
                 }
 
                 // decide if already there TODO: Collision checking
-                if (bestDist < 2)
+                if (bestDist < 0.2f)
                 {
                     destination.Visit(this);
                     currentLocation = destination;
                 }
                 else
                 {
-                    MoveTowards(destination.gameObject);
+                    MoveTowards(destination);
                 }
             }
             else
@@ -243,7 +250,10 @@ namespace Assets
             if (possiblePartners.Count == 0)
                 return;
             HumanAI partner = possiblePartners[Random.Range(0, possiblePartners.Count - 1)];
-            GameObject child = HumanFactory.CreateHuman(gameObject.transform.position);
+            GameObject child = HumanFactory.CreateHuman();
+            Transform worldTrans = FindObjectOfType<WorldMap>().transform;
+            child.transform.SetParent(worldTrans);
+            child.transform.localPosition = gameObject.transform.localPosition;
             child.GetComponent<HumanAI>().BeBorn(this, partner);
         }
 

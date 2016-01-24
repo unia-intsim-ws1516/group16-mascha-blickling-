@@ -14,6 +14,8 @@ namespace Assets
         private HashSet<HumanAI> visitors = new HashSet<HumanAI>();
         private static GUIStyle textStyle = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 10 };
 
+        public int X, Y;
+
         public enum Type
         {
             Hospital, Bar, Home, Office, Shop, None
@@ -62,11 +64,21 @@ namespace Assets
                     }
                 }
             }
+            UpdateVisuals();
+        }
+
+        void UpdateVisuals()
+        {
+            GetComponent<Transform>().localPosition = new Vector3(X, 0.1f, Y);
         }
 
         void Start()
         {
+        }
 
+        public Vector2 Position()
+        {
+            return new Vector2(X, Y);
         }
 
         void OnGUI()

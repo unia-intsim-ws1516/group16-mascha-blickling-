@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "group16-mascha-blickling--visuals.CSharp", "group16-mascha-blickling--visuals.CSharp.csproj", "{036992A4-C460-9BEA-F393-017FE44DA53A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{036992A4-C460-9BEA-F393-017FE44DA53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{036992A4-C460-9BEA-F393-017FE44DA53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{036992A4-C460-9BEA-F393-017FE44DA53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{036992A4-C460-9BEA-F393-017FE44DA53A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
