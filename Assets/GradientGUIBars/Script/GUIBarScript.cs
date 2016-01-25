@@ -19,6 +19,7 @@ public class GUIBarScript : MonoBehaviour {
 	//position and scale of the GUIBar on the screen
 	public Vector2 Position;
 	public float ScaleSize;
+    public int position;
 
 	//Font Variables
 	public bool DisplayText = true;
@@ -99,7 +100,7 @@ public class GUIBarScript : MonoBehaviour {
 	private void UpdateBar()
 	{
 
-        Position.y = Screen.height - TextSize - 70  * ScaleSize;
+        Position.y = Screen.height - TextSize - 50 * (ScaleSize + position);
 		//update the gradient
 		UpdateGradient ();
 

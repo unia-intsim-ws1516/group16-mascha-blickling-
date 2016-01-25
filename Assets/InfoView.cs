@@ -13,6 +13,7 @@ namespace Assets
     {
         public static bool VirusView = true;
         public GameObject HealthBar;
+        public GameObject HappinessBar;
 
         void Start()
         {
@@ -20,6 +21,11 @@ namespace Assets
             {
                 HealthBar = GameObject.Find("HealthBar");
             }
+            if (HappinessBar == null)
+            {
+                HappinessBar = GameObject.Find("HappinessBar");
+            }
+
         }
         void Update()
         {
@@ -54,7 +60,10 @@ namespace Assets
                 benefit / count, FindObjectsOfType<HumanAI>().Count());
 
             //HEALTH BAR UPDATE
-            HealthBar.SendMessage("SetNewValue", happy / count / 256f);
+            HealthBar.SendMessage("SetNewValue",  boredom / count / 256f);
+            //HAPPINESS BAR UPDATE
+            HappinessBar.SendMessage("SetNewValue", happy / count / 256f);
+
         }
     }
 }
